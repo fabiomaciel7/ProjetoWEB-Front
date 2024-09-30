@@ -10,18 +10,24 @@ const Login: React.FC = () => {
   const [message, setMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      
-      try {
-        const user = await login(email, password);
-        setMessage(`Usuário logado com sucesso.`);
-      } catch (error) {
-        setMessage('Falha ao realizar o login do usuário.');
-      }
-    };
+    e.preventDefault();
+    
+    try {
+      const user = await login(email, password);
+      setMessage(`Usuário logado com sucesso.`);
+    } catch (error) {
+      setMessage('Falha ao realizar o login do usuário.');
+    }
+  };
 
   return (
     <div className="auth-container">
+      <Link to="/" className="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-arrow-left" viewBox="0 0 16 16">
+      <path fillRule="evenodd" d="M15.5 8a.5.5 0 0 0-.5-.5H3.707l3.146-3.146a.5.5 0 0 0-.708-.708l-4.5 4.5a.5.5 0 0 0 0 .708l4.5 4.5a.5.5 0 0 0 .708-.708L3.707 8.5H15a.5.5 0 0 0 .5-.5z"/>
+      </svg>
+      </Link>
+
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
