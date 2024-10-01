@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/HomePage.css';
-import taskmanager from '../assets/taskmanager.png'; // Corrige a importação da imagem
+import taskmanager from '../assets/taskmanager.png';
 
 
 const HomePage: React.FC = () => {

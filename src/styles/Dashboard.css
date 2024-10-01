@@ -1,0 +1,85 @@
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .sidebar {
+    width: 250px;
+    background: linear-gradient(135deg, #000000, #55024a);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #ffffff;
+    margin-right: 0.49px;
+  }
+  
+  .profile-section {
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .profile-section svg {
+    width: 50px;
+    height: 50px;
+    color: #ffffff;
+    margin-bottom: 0;
+  }
+  
+  .menu-options {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .menu-options .btn {
+    width: 100%;
+  }
+  
+  .task-list-container {
+    flex-grow: 1;
+    padding: 20px;
+    background: linear-gradient(135deg, #000000, #55024a);
+  }
+  
+  .task-list-container h2 {
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2a1d38;
+    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 5px;
+  }
+  
+  .task-item.completed {
+    background-color: #15a537;
+  }
+  
+  .task-item h5 {
+    margin: 0;
+    color: white;
+  }
+  
+  .task-item p {
+    margin: 0;
+    color: #e3e4e6;
+  }
+
+  .due-date {
+    color: white;
+  }
+  
+  .profile-section p {
+    color: #ffffff; /* Cor do texto */
+    margin: 0; /* Remove margens acima e abaixo do texto */
+    font-size: 14px; /* Tamanho da fonte */
+    font-weight: bold;
+  }

@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { API_BASE_URL } from '../config/apiConfig';
+import {Task} from '../types/Task'
+import {LoginResponse} from '../interfaces/LoginResponse';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -7,13 +9,11 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    // Obtém o token do localStorage
     const token = localStorage.getItem('token');
-    
-    // Se o token estiver presente, adiciona o header Authorization
+
     if (token) {
       config.headers = {
-        ...config.headers, // Mantém outros headers, se existirem
+        ...config.headers,
         'Authorization': `Bearer ${token}`
       };
     }
@@ -36,14 +36,33 @@ export const createUser = async (name: string, email: string, password: string) 
     }
 };
 
-export const login = async (email: string, password: string) => {
+export const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
-    const response = await axios.post('http://localhost:3001/api/login', {
+    const response = await axios.post<LoginResponse>('http://localhost:3001/api/login', {
       email,
-      password
+      password,
     });
+    const { token } = response.data;
+
+    localStorage.setItem('token', token);
+
     return response.data;
   } catch (error) {
     throw new Error('Failed to login.');
+  }
+};
+
+export const getTasks = async (): Promise<Task[]> => {
+  const response = await api.get('http://localhost:3001/api/tasks');
+  return response.data as Task[];
+};
+
+export const logout = async () => {
+  try {
+    await api.post('http://localhost:3001/api/logout');
+    localStorage.removeItem('token');
+  } catch (error) {
+    console.error('Erro ao fazer logout:', error);
+    throw error;
   }
 };

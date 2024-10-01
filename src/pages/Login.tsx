@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { login } from '../services/apiService';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Auth.css';
 
 const Login: React.FC = () => {
@@ -8,13 +8,17 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+  
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const user = await login(email, password);
-      setMessage(`Usuário logado com sucesso.`);
+      setMessage('Usuário logado com sucesso.');
+  
+      navigate('/dashboard');
     } catch (error) {
       setMessage('Falha ao realizar o login do usuário.');
     }
