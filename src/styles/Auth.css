@@ -41,38 +41,38 @@
   }
   
   .back-button {
-    position: absolute; /* Permite posicioná-lo no canto */
-    top: 20px; /* Distância do topo */
-    left: 20px; /* Distância da esquerda */
-    background-color: #55024a; /* Cor de fundo */
-    color: #f7f7f7; /* Cor do texto */
-    padding: 10px 15px; /* Espaçamento interno */
-    text-decoration: none; /* Remove o sublinhado */
-    border-radius: 5px; /* Bordas arredondadas */
-    transition: background-color 0.3s; /* Transição suave para o hover */
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: #55024a;
+    color: #f7f7f7;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
   }
   
   .back-button:hover {
-    background-color: #000000; /* Cor de fundo ao passar o mouse */
+    background-color: #000000;
   }
   
   .back-link {
-    position: absolute; /* Permite posicioná-lo no canto */
-    top: 20px; /* Distância do topo */
-    left: 20px; /* Distância da esquerda */
-    color: #f7f7f7; /* Cor do texto */
-    text-decoration: none; /* Remove o sublinhado */
-    display: flex; /* Alinha o ícone e o texto */
-    align-items: center; /* Centraliza verticalmente */
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: #f7f7f7;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
   }
   
   .back-link svg {
-    margin-right: 5px; /* Espaço entre o ícone e o texto */
-    fill: #f7f7f7; /* Cor do ícone */
-    transition: fill 0.3s; /* Transição suave para o hover */
+    margin-right: 5px;
+    fill: #f7f7f7;
+    transition: fill 0.3s;
   }
   
   .back-link:hover svg {
-    fill: #ffffff; /* Cor do ícone ao passar o mouse */
+    fill: #ffffff;
   }
   
