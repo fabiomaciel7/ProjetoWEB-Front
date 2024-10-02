@@ -2,7 +2,7 @@ import axios from 'axios';
 import { API_BASE_URL } from '../config/apiConfig';
 import { Task } from '../types/Task';
 import { User } from '../types/User';
-import { LoginResponse } from '../interfaces/LoginResponse';
+import { LoginResponse } from '../types/LoginResponse';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
