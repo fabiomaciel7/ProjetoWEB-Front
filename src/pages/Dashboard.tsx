@@ -6,10 +6,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/Dashboard.css';
 import { Task } from '../types/Task';
 import taskmanager from '../assets/taskmanager.png';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const Dashboard: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false); // Adiciona o estado de isAdmin
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,7 +33,7 @@ const Dashboard: React.FC = () => {
     };
 
     fetchTasks();
-    fetchUserProfile(); // Busca o perfil do usuário ao montar o componente
+    fetchUserProfile();
   }, []);
 
   const handleTaskCompletion = async (taskId: number, completed: boolean) => {
@@ -57,6 +58,16 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const handleOnDragEnd = (result: any) => {
+    if (!result.destination) return;
+
+    const items = Array.from(tasks);
+    const [reorderedTask] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedTask);
+
+    setTasks(items);
+  };
+
   return (
     <div className="dashboard-container">
       <div className="sidebar">
@@ -77,7 +88,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           <div className="menu-options">
-            {isAdmin && ( // Condicional para exibir o botão de Lista de Usuários apenas para admins
+            {isAdmin && (
               <Link to="/usersList" className="btn btn-light">
                 Lista de Usuários
               </Link>
@@ -92,24 +103,54 @@ const Dashboard: React.FC = () => {
         <div className="content-header">
           <h2>Minhas Tarefas</h2>
         </div>
-        <div className="task-grid">
-          {tasks.map((task) => (
-            <div key={task.id} className={`task-card ${task.completed ? 'completed' : ''}`}>
-              <input
-                type="checkbox"
-                className="task-checkbox"
-                checked={task.completed}
-                onChange={() => handleTaskCompletion(task.id, !task.completed)}
-              />
-              <h5>{task.title}</h5><br />
-              <div className="task-dates">
-                <small>Criação: {new Date(task.createdAt).toLocaleDateString('pt-BR')}</small><br />
-                <small>Prazo: {new Date(task.dueDate).toLocaleDateString('pt-BR')}</small><br />
-                <small>Ultima Modificação: {new Date(task.updatedAt).toLocaleDateString('pt-BR')}</small>
-              </div>
-            </div>
-          ))}
-        </div>
+
+        <Link to="/createTask" className="add-task-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+        </svg>
+          Adicionar Tarefa
+        </Link>
+
+        <DragDropContext onDragEnd={handleOnDragEnd}>
+          {tasks.length > 0 && (
+            <Droppable droppableId="tasks">
+              {(provided) => (
+                <div className="task-grid" {...provided.droppableProps} ref={provided.innerRef}>
+                  {tasks.map((task, index) => (
+                    <Draggable key={task.id} draggableId={`${task.id}`} index={index}>
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className={`task-card ${task.completed ? 'completed' : ''} ${snapshot.isDragging ? 'dragging' : ''}`}
+                        >
+                          <input
+                            type="checkbox"
+                            className="task-checkbox"
+                            checked={task.completed}
+                            onChange={() => handleTaskCompletion(task.id, !task.completed)}
+                          />
+                          <h5>{task.title}</h5><br />
+                          <div className="task-dates">
+                            <small>Criação: {new Date(task.createdAt).toLocaleDateString('pt-BR')}</small><br />
+                            <small>Prazo: {new Date(task.dueDate).toLocaleDateString('pt-BR')}</small><br />
+                            <small>Ultima Modificação: {new Date(task.updatedAt).toLocaleDateString('pt-BR')}</small><br />
+                            {isAdmin && (
+                              <small>ID do Usuário: {task.userId}</small>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          )}
+        </DragDropContext>
       </div>
     </div>
   );

@@ -82,11 +82,12 @@
 }
 
 .task-grid {
-  display: flex;
+  display: grid;
   flex-wrap: wrap;
   gap: 20px;
   justify-content: flex-start;
   width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
 
 .task-card {
@@ -144,4 +145,31 @@
   font-size: 14px;
   font-weight: bold;
   color: #ffffff;
+}
+
+.task-card:active {
+  cursor: grabbing;
+}
+
+.task-card.dragging {
+  background-color: #dbeafe;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+.add-task-button {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  background-color: #4285ce;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 16px;
+  align-self: flex-start;
+}
+
+.add-task-button svg {
+  width: 24px;
+  height: 24px;
 }

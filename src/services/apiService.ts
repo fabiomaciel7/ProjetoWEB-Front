@@ -44,7 +44,7 @@ export const login = async (email: string, password: string): Promise<LoginRespo
     const { token, id } = response.data;
 
     localStorage.setItem('token', token);
-    localStorage.setItem('userId', id.toString()); // Certifique-se de salvar o ID como string
+    localStorage.setItem('userId', id.toString());
 
     return response.data;
   } catch (error) {
@@ -61,7 +61,7 @@ export const logout = async () => {
   try {
     await api.post('http://localhost:3001/api/logout');
     localStorage.removeItem('token');
-    localStorage.removeItem('userId'); // Remover também o userId ao deslogar
+    localStorage.removeItem('userId');
   } catch (error) {
     console.error('Erro ao fazer logout:', error);
     throw error;
@@ -78,7 +78,7 @@ export const markTaskAsCompleted = async (taskId: number, completed: boolean) =>
 
 export const getUserProfile = async (): Promise<User> => {
   try {
-    const userId = localStorage.getItem('userId'); // Recupera o userId do localStorage
+    const userId = localStorage.getItem('userId');
     if (!userId) {
       throw new Error('Usuário não autenticado.');
     }
@@ -90,3 +90,23 @@ export const getUserProfile = async (): Promise<User> => {
   }
 };
 
+export const createTask = async (title: string, description?: string, dueDate?: Date | null) => {
+  try {
+    const data: { title: string; description?: string; dueDate?: Date | null } = {
+      title,
+    };
+
+    if (description) {
+      data.description = description;
+    }
+
+    if (dueDate) {
+      data.dueDate = dueDate;
+    }
+
+    const response = await api.post('http://localhost:3001/api/task/create', data);
+    return response.data;
+  } catch (error) {
+    throw new Error('Erro ao criar tarefa');
+  }
+};
