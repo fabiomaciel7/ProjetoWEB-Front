@@ -1,0 +1,123 @@
+.sessions-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .sidebar {
+    width: 225px;
+    background: linear-gradient(135deg, #000000, #55024a);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #ffffff;
+    flex-shrink: 0;
+    position: fixed;
+    height: 100%;
+  }
+  
+  .logo-section {
+    padding: 20px;
+    align-items: center;
+  }
+  
+  .logo {
+    max-width: 90%;
+    height: auto;
+  }
+  
+  .menu-section {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .profile-section {
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .profile-section svg {
+    width: 50px;
+    height: 50px;
+    color: #ffffff;
+  }
+  
+  .menu-options {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .menu-options .btn {
+    width: 100%;
+  }
+  
+  .content-area {
+    flex-grow: 1;
+    padding: 20px;
+    margin-left: 225px;
+    background: linear-gradient(135deg, #000000, #55024a);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+  
+  .content-header {
+    width: 100%;
+    background: linear-gradient(135deg, #55024a, #000000);
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+  
+  .content-header h2 {
+    margin: 0;
+    color: white;
+    text-align: center;
+    width: 100%;
+    font-weight: bold;
+  }
+  
+  /* Estilização para a lista de sessões */
+  .session-list {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+  }
+  
+  .session-item {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
+    font-size: 12px; /* Diminuir o tamanho da fonte */
+  }
+  
+  .session-item h5 {
+    color: #2a1d38;
+    margin: 0 0 5px;
+    font-size: 11px; /* Reduzir o tamanho da fonte do título */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Aplicar truncamento para tokens longos */
+  }
+  
+  .session-item p {
+    margin: 3px 0;
+    color: #555;
+    font-size: 11px; /* Reduzir o tamanho da fonte dos parágrafos */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Evitar que texto muito longo quebre o layout */
+  }
+  
+  /* Ajuste para o container não exceder a largura da tela */
+  .session-item-container {
+    max-width: 100%;
+    word-wrap: break-word; /* Quebra de linha para tokens longos */
+  }
+  

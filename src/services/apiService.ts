@@ -3,6 +3,7 @@ import { API_BASE_URL } from '../config/apiConfig';
 import { Task } from '../types/Task';
 import { User } from '../types/User';
 import { LoginResponse } from '../types/LoginResponse';
+import { Session } from '../types/Session';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -108,5 +109,14 @@ export const createTask = async (title: string, description?: string, dueDate?: 
     return response.data;
   } catch (error) {
     throw new Error('Erro ao criar tarefa');
+  }
+};
+
+export const getSessions = async (): Promise<Session[]> => {
+  try {
+    const response = await api.get(`http://localhost:3001/api/sessions`);
+    return response.data as Session[];
+  } catch (error) {
+    throw new Error('Erro ao buscar sessões.');
   }
 };
