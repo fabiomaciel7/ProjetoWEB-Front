@@ -25,6 +25,7 @@
         "react-datepicker": "^7.4.0",
         "react-dom": "^18.3.1",
         "react-hook-form": "^7.53.0",
+        "react-icons": "^5.3.0",
         "react-router-dom": "^6.26.2",
         "react-scripts": "5.0.1",
         "sistemainventariowebi-frontend": "file:",
@@ -58,6 +59,7 @@
         ]
     },
     "devDependencies": {
-        "@types/react-beautiful-dnd": "^13.1.8"
+        "@types/react-beautiful-dnd": "^13.1.8",
+        "@types/react-icons": "^3.0.0"
     }
 }

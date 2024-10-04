@@ -4,6 +4,7 @@ import { Task } from '../types/Task';
 import { User } from '../types/User';
 import { LoginResponse } from '../types/LoginResponse';
 import { Session } from '../types/Session';
+import { UserUpdated } from '../types/UserUpdated';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -35,6 +36,31 @@ export const createUser = async (name: string, email: string, password: string) 
     throw new Error('Failed to create user');
   }
 };
+
+export const updateUser = async (data: UserUpdated) => {
+  try {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      throw new Error('Usuário não autenticado.');
+    }
+
+    const updatedData: UserUpdated ={
+      name: data.name,
+      email: data.email
+    }
+
+    if(data.password){
+      updatedData.password = data.password;
+    }
+
+    const response = await api.put(`http://localhost:3001/api/user/update/${userId}`, updatedData);
+    
+    return response.data;
+  } catch (error) {
+    throw new Error('Erro ao atualizar usuário: ');
+  }
+};
+
 
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
@@ -118,5 +144,17 @@ export const getSessions = async (): Promise<Session[]> => {
     return response.data as Session[];
   } catch (error) {
     throw new Error('Erro ao buscar sessões.');
+  }
+};
+
+export const deleteUser = async () => {
+  try {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      throw new Error('Usuário não autenticado.');
+    }
+    await api.delete(`http://localhost:3001/api/user/delete/${userId}`);
+  } catch (error) {
+    throw new Error('Erro ao deletar usuário.');
   }
 };
