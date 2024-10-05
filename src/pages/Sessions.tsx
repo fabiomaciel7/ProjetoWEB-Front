@@ -16,7 +16,6 @@ const Sessions: React.FC = () => {
     const fetchSessions = async () => {
       try {
         const sessionsData = await getSessions();
-        // Ordena as sessões pela data de expiração (mais recentes no topo)
         const sortedSessions = sessionsData.sort(
           (a: Session, b: Session) => new Date(b.expiresAt).getTime() - new Date(a.expiresAt).getTime()
         );

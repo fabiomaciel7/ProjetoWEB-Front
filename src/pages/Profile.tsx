@@ -15,7 +15,8 @@ const Profile: React.FC = () => {
   const [editedProfile, setEditedProfile] = useState<UserUpdated>(userProfile);
   const [password, setPassword] = useState('');
   const [isModified, setIsModified] = useState(false);
-  const [showModal, setShowModal] = useState(false); // Estado para controlar a exibição do modal
+  const [showModal, setShowModal] = useState(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,6 +25,7 @@ const Profile: React.FC = () => {
         const profile = await getUserProfile();
         setUserProfile(profile);
         setEditedProfile(profile);
+        setIsAdmin(profile.isAdmin);
       } catch (error) {
         console.error('Erro ao buscar perfil do usuário:', error);
       }
@@ -78,10 +80,8 @@ const Profile: React.FC = () => {
     }
   };
 
-  // Função para abrir o modal
   const openModal = () => setShowModal(true);
 
-  // Função para fechar o modal
   const closeModal = () => setShowModal(false);
 
   return (
@@ -102,6 +102,12 @@ const Profile: React.FC = () => {
             </Link>
           </div>
           <div className="menu-options">
+          {isAdmin && (
+              <Link to="/usersList" className="btn btn-light">
+                Lista de Usuários
+              </Link>
+            )}
+            <Link to="/sessions" className="btn btn-light">Minhas Sessões</Link>
             <Button variant="danger" onClick={handleLogout}>Logout</Button>
           </div>
         </div>
