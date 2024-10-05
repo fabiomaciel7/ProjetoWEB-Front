@@ -4,9 +4,9 @@ import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
-import CreateTask from './pages/CreateTask'
-import Sessions from './pages/Sessions'
-import Profile from './pages/Profile'
+import CreateTask from './pages/CreateTask';
+import Sessions from './pages/Sessions';
+import Profile from './pages/Profile';
 
 const App: React.FC = () => {
   return (
@@ -18,7 +18,7 @@ const App: React.FC = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/createTask" element={<CreateTask />} />
         <Route path="/sessions" element={<Sessions />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/:id" element={<Profile />} />
       </Routes>
     </Router>
   );

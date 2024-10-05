@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
-import { createTask, logout,getUserProfile } from '../services/apiService';
+import { createTask, logout, getUserProfile } from '../services/apiService';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import taskmanager from '../assets/taskmanager.png';
@@ -17,8 +17,11 @@ const CreateTask: React.FC = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const userProfile = await getUserProfile();
-        setIsAdmin(userProfile.isAdmin);
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+          const userProfile = await getUserProfile(userId);
+          setIsAdmin(userProfile.isAdmin);
+        }
       } catch (error) {
         console.log('Erro ao buscar perfil do usuário:', error);
       }
@@ -56,7 +59,7 @@ const CreateTask: React.FC = () => {
         </div>
         <div className="menu-section">
           <div className="profile-section">
-            <Link to="/profile" className="profile-link">
+            <Link to={`/profile/${localStorage.getItem('userId')}`} className="profile-link">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-person-fill" viewBox="0 0 16 16">
                 <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
               </svg>
@@ -64,7 +67,7 @@ const CreateTask: React.FC = () => {
             </Link>
           </div>
           <div className="menu-options">
-          {isAdmin && (
+            {isAdmin && (
               <Link to="/usersList" className="btn btn-light">
                 Lista de Usuários
               </Link>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useParams } from 'react-router-dom';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { getUserProfile, updateUser, deleteUser, logout } from '../services/apiService';
 import taskmanager from '../assets/taskmanager.png';
@@ -8,6 +8,7 @@ import { BsFillSaveFill, BsFillTrash3Fill } from 'react-icons/bs';
 import { UserUpdated } from '../types/UserUpdated';
 
 const Profile: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const [userProfile, setUserProfile] = useState<UserUpdated>({
     name: '',
     email: '',
@@ -20,19 +21,22 @@ const Profile: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchUserProfile = async () => {
       try {
-        const profile = await getUserProfile();
-        setUserProfile(profile);
-        setEditedProfile(profile);
-        setIsAdmin(profile.isAdmin);
+        if (id) {
+          const userProfile = await getUserProfile(id);
+          setUserProfile(userProfile);
+          setEditedProfile(userProfile);
+          setIsAdmin(userProfile.isAdmin);
+        }
       } catch (error) {
-        console.error('Erro ao buscar perfil do usuário:', error);
+        console.log('Erro ao buscar perfil do usuário:', error);
       }
     };
-
-    fetchProfile();
-  }, []);
+  
+    fetchUserProfile();
+  }, [id]);
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

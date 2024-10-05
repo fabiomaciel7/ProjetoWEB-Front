@@ -103,7 +103,7 @@ export const markTaskAsCompleted = async (taskId: number, completed: boolean) =>
   }
 };
 
-export const getUserProfile = async (): Promise<User> => {
+export const getUserAtual = async (): Promise<User> => {
   try {
     const userId = localStorage.getItem('userId');
     if (!userId) {
@@ -156,5 +156,14 @@ export const deleteUser = async () => {
     await api.delete(`http://localhost:3001/api/user/delete/${userId}`);
   } catch (error) {
     throw new Error('Erro ao deletar usuário.');
+  }
+};
+
+export const getUserProfile = async (userId: string): Promise<User> => {
+  try {
+    const response = await api.get(`http://localhost:3001/api/user/${userId}`);
+    return response.data as User;
+  } catch (error) {
+    throw new Error('Erro ao buscar usuário.');
   }
 };
