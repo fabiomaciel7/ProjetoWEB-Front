@@ -81,7 +81,6 @@
     font-weight: bold;
   }
   
-  /* Estilização para a lista de sessões */
   .session-list {
     list-style: none;
     padding: 0;
@@ -94,30 +93,29 @@
     padding: 10px;
     margin-bottom: 10px;
     box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
-    font-size: 12px; /* Diminuir o tamanho da fonte */
+    font-size: 12px;
   }
   
   .session-item h5 {
     color: #2a1d38;
     margin: 0 0 5px;
-    font-size: 11px; /* Reduzir o tamanho da fonte do título */
+    font-size: 11px;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Aplicar truncamento para tokens longos */
+    text-overflow: ellipsis;
   }
   
   .session-item p {
     margin: 3px 0;
     color: #555;
-    font-size: 11px; /* Reduzir o tamanho da fonte dos parágrafos */
+    font-size: 11px;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Evitar que texto muito longo quebre o layout */
+    text-overflow: ellipsis;
   }
   
-  /* Ajuste para o container não exceder a largura da tela */
   .session-item-container {
     max-width: 100%;
-    word-wrap: break-word; /* Quebra de linha para tokens longos */
+    word-wrap: break-word;
   }
   

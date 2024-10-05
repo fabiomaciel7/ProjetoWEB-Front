@@ -4,7 +4,7 @@ import { Button, Form, Modal } from 'react-bootstrap';
 import { getUserProfile, updateUser, deleteUser, logout } from '../services/apiService';
 import taskmanager from '../assets/taskmanager.png';
 import '../styles/Profile.css';
-import { BsFillSaveFill, BsFillTrash3Fill } from 'react-icons/bs';
+import {BsFillTrash3Fill, BsFloppy2Fill } from 'react-icons/bs';
 import { UserUpdated } from '../types/UserUpdated';
 
 const Profile: React.FC = () => {
@@ -163,7 +163,7 @@ const Profile: React.FC = () => {
               disabled={!isModified}
               className="save-button"
             >
-              <BsFillSaveFill /> Salvar Alterações
+              <BsFloppy2Fill /> Salvar Alterações
             </Button>
             <Button
               variant="danger"
