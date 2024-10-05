@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import CreateTask from './pages/CreateTask';
 import Sessions from './pages/Sessions';
 import Profile from './pages/Profile';
+import UsersList from './pages/UsersList'
 
 const App: React.FC = () => {
   return (
@@ -19,6 +20,7 @@ const App: React.FC = () => {
         <Route path="/createTask" element={<CreateTask />} />
         <Route path="/sessions" element={<Sessions />} />
         <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/usersList" element={<UsersList />} />
       </Routes>
     </Router>
   );

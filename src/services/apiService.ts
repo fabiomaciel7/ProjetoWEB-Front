@@ -37,19 +37,18 @@ export const createUser = async (name: string, email: string, password: string) 
   }
 };
 
-export const updateUser = async (data: UserUpdated) => {
+export const updateUser = async (data: UserUpdated, userId: string | undefined) => {
   try {
-    const userId = localStorage.getItem('userId');
     if (!userId) {
       throw new Error('Usuário não autenticado.');
     }
 
-    const updatedData: UserUpdated ={
+    const updatedData: UserUpdated = {
       name: data.name,
       email: data.email
-    }
+    };
 
-    if(data.password){
+    if (data.password) {
       updatedData.password = data.password;
     }
 
@@ -147,9 +146,8 @@ export const getSessions = async (): Promise<Session[]> => {
   }
 };
 
-export const deleteUser = async () => {
+export const deleteUser = async (userId: string | undefined) => {
   try {
-    const userId = localStorage.getItem('userId');
     if (!userId) {
       throw new Error('Usuário não autenticado.');
     }
@@ -165,5 +163,22 @@ export const getUserProfile = async (userId: string): Promise<User> => {
     return response.data as User;
   } catch (error) {
     throw new Error('Erro ao buscar usuário.');
+  }
+};
+
+export const getAllUsers = async (): Promise<User[]> => {
+  try {
+    const response = await api.get(`http://localhost:3001/api/users`);
+    return response.data as User[];
+  } catch (error) {
+    throw new Error('Erro ao buscar usuário.');
+  }
+};
+
+export const promoteToAdmin = async (userId: number) => {
+  try {
+    await api.post(`http://localhost:3001/api/users/promote/${userId}`);
+  } catch (error) {
+    throw new Error('Erro ao promover usuário a admin.');
   }
 };
