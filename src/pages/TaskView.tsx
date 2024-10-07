@@ -1,100 +1,93 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { getUserProfile, updateUser, deleteUser, logout } from '../services/apiService';
+import { getTaskById, updateTask, deleteTask, logout } from '../services/apiService';
 import taskmanager from '../assets/taskmanager.png';
-import '../styles/Profile.css';
-import {BsFillTrash3Fill, BsFloppy2Fill } from 'react-icons/bs';
-import { UserUpdated } from '../types/UserUpdated';
+import '../styles/TaskView.css';
+import { BsFillTrash3Fill, BsFloppy2Fill } from 'react-icons/bs';
+import { TaskUpdated } from '../types/TaskUpdated';
 
-const Profile: React.FC = () => {
+const TaskView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [userProfile, setUserProfile] = useState<UserUpdated>({
-    name: '',
-    email: '',
+  const [task, setTask] = useState<TaskUpdated>({
+    title: '',
+    description: '',
+    dueDate: '',
+    completed: false,
   });
-  const [editedProfile, setEditedProfile] = useState<UserUpdated>(userProfile);
-  const [password, setPassword] = useState('');
+  const [editedTask, setEditedTask] = useState<TaskUpdated>(task);
   const [isModified, setIsModified] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const fetchTask = async () => {
       try {
-        if (id) {
-          const userProfile = await getUserProfile(id);
-          setUserProfile(userProfile);
-          setEditedProfile(userProfile);
-          setIsAdmin(userProfile.isAdmin);
+        if (id) {  
+          const fetchedTask = await getTaskById(id);
+          setTask(fetchedTask);
+          setEditedTask({
+            title: fetchedTask.title,
+            description: fetchedTask.description,
+            dueDate: new Date(fetchedTask.dueDate).toISOString().split('T')[0],
+            completed: fetchedTask.completed
+          });
+        } else {
+          console.error('ID da tarefa não fornecido');
         }
       } catch (error) {
-        console.log('Erro ao buscar perfil do usuário:', error);
+        console.log('Erro ao buscar tarefa:', error);
       }
     };
   
-    fetchUserProfile();
+    fetchTask();
   }, [id]);
   
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setEditedProfile({ ...editedProfile, [name]: value });
-    setIsModified(true);
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
+    setEditedTask({ ...editedTask, [name]: value });
     setIsModified(true);
   };
 
   const handleSaveChanges = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const updatedData = { ...editedProfile };
-      if (password) {
-        updatedData.password = password;
+      const updatedTask = {
+        ...editedTask,
+        dueDate: new Date(editedTask.dueDate),
+      };
+      if (id) {
+        await updateTask(id, updatedTask);
+      } else {
+        console.error('ID da tarefa não é válido');
       }
-      await updateUser(updatedData, id);
       setIsModified(false);
-      setUserProfile(editedProfile);
-      setPassword('');
+      setTask(updatedTask);
     } catch (error) {
       console.error('Erro ao salvar alterações:', error);
     }
-  };  
+  };
 
-  const handleDeleteProfile = async () => {
+  const handleDeleteTask = async () => {
     try {
-      await deleteUser(id);
-      if(id === localStorage.getItem('userId')){
-        navigate('/');
+      if (id) {
+        await deleteTask(id);
+      } else {
+        console.error('ID da tarefa não é válido');
       }
-      else{
-        navigate('/usersList')
-      }
+      navigate('/dashboard');
     } catch (error) {
-      console.error('Erro ao excluir perfil:', error);
+      console.error('Erro ao excluir tarefa:', error);
     }
     setShowModal(false);
   };
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/login');
-    } catch (error) {
-      console.error('Erro ao fazer logout:', error);
-    }
-  };
-
   const openModal = () => setShowModal(true);
-
   const closeModal = () => setShowModal(false);
 
   return (
-    <div className="profile-container">
+    <div className="task-edit-container">
       <div className="sidebar">
         <div className="logo-section">
           <Link to="/dashboard">
@@ -111,53 +104,49 @@ const Profile: React.FC = () => {
             </Link>
           </div>
           <div className="menu-options">
-          {isAdmin && (
-              <Link to="/usersList" className="btn btn-light">
-                Lista de Usuários
-              </Link>
-            )}
             <Link to="/sessions" className="btn btn-light">Minhas Sessões</Link>
-            <Button variant="danger" onClick={handleLogout}>Logout</Button>
+            <Button variant="danger" onClick={logout}>Logout</Button>
           </div>
         </div>
       </div>
 
       <div className="content-area">
         <div className="content-header">
-          <h2>Ver Perfil</h2>
+          <h2>Editar Tarefa</h2>
         </div>
 
-        <Form className="profile-form" onSubmit={handleSaveChanges}>
-          <Form.Group controlId="name">
-            <Form.Label>Nome</Form.Label>
+        <Form className="task-edit-form" onSubmit={handleSaveChanges}>
+          <Form.Group controlId="title">
+            <Form.Label>Título</Form.Label>
             <Form.Control
               type="text"
-              name="name"
-              value={editedProfile.name}
+              name="title"
+              value={editedTask.title}
               onChange={handleChange}
               required
             />
           </Form.Group>
 
-          <Form.Group controlId="email" className="mt-3">
-            <Form.Label>Email</Form.Label>
+          <Form.Group controlId="description" className="mt-3">
+            <Form.Label>Descrição</Form.Label>
             <Form.Control
-              type="email"
-              name="email"
-              value={editedProfile.email}
+              as="textarea"
+              rows={3}
+              name="description"
+              value={editedTask.description}
               onChange={handleChange}
               required
             />
           </Form.Group>
 
-          <Form.Group controlId="password" className="mt-3">
-            <Form.Label>Senha</Form.Label>
+          <Form.Group controlId="dueDate" className="mt-3">
+            <Form.Label>Prazo</Form.Label>
             <Form.Control
-              type="password"
-              name="password"
-              value={password}
-              onChange={handlePasswordChange}
-              placeholder="Deixe em branco se não quiser alterar"
+              type="date"
+              name="dueDate"
+              value={editedTask.dueDate ? new Date(editedTask.dueDate).toISOString().split('T')[0] : ''}
+              onChange={handleChange}
+              required
             />
           </Form.Group>
 
@@ -175,7 +164,7 @@ const Profile: React.FC = () => {
               onClick={openModal}
               className="delete-button"
             >
-              <BsFillTrash3Fill /> Excluir Perfil
+              <BsFillTrash3Fill /> Excluir Tarefa
             </Button>
           </div>
         </Form>
@@ -184,13 +173,13 @@ const Profile: React.FC = () => {
           <Modal.Header closeButton>
             <Modal.Title>Confirmar Exclusão</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Tem certeza de que deseja excluir seu perfil? Esta ação não pode ser desfeita.</Modal.Body>
+          <Modal.Body>Tem certeza de que deseja excluir esta tarefa? Esta ação não pode ser desfeita.</Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={closeModal}>
               Cancelar
             </Button>
-            <Button variant="danger" onClick={handleDeleteProfile}>
-              Excluir Perfil
+            <Button variant="danger" onClick={handleDeleteTask}>
+              Excluir Tarefa
             </Button>
           </Modal.Footer>
         </Modal>
@@ -199,4 +188,4 @@ const Profile: React.FC = () => {
   );
 };
 
-export default Profile;
+export default TaskView;

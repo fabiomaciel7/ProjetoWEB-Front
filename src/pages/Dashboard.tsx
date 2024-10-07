@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getTasks, logout, markTaskAsCompleted, getUserProfile } from '../services/apiService';
-import { Button } from 'react-bootstrap';
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/Dashboard.css';
 import { Task } from '../types/Task';
@@ -25,7 +25,7 @@ const Dashboard: React.FC = () => {
         console.log('Erro ao buscar perfil do usuário:', error);
       }
     };
-  
+
     const fetchTasks = async () => {
       try {
         const tasksData: Task[] = await getTasks();
@@ -34,7 +34,7 @@ const Dashboard: React.FC = () => {
         console.log('Erro ao buscar tasks:', error);
       }
     };
-  
+
     fetchUserProfile();
     fetchTasks();
   }, []);
@@ -108,10 +108,10 @@ const Dashboard: React.FC = () => {
         </div>
 
         <Link to="/createTask" className="add-task-button">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
-          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-        </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+          </svg>
           Adicionar Tarefa
         </Link>
 
@@ -122,19 +122,26 @@ const Dashboard: React.FC = () => {
                 <div className="task-grid" {...provided.droppableProps} ref={provided.innerRef}>
                   {tasks.map((task, index) => (
                     <Draggable key={task.id} draggableId={`${task.id}`} index={index}>
-                      {(provided, snapshot) => (
+                    {(provided, snapshot) => (
+                      <Link to={`/task/${task.id}`} className="task-link">
                         <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                           className={`task-card ${task.completed ? 'completed' : ''} ${snapshot.isDragging ? 'dragging' : ''}`}
                         >
-                          <input
-                            type="checkbox"
-                            className="task-checkbox"
-                            checked={task.completed}
-                            onChange={() => handleTaskCompletion(task.id, !task.completed)}
-                          />
+                          <OverlayTrigger
+                            placement="top"
+                            overlay={<Tooltip id={`tooltip-complete-${task.id}`}>Marcar como concluída</Tooltip>}
+                          >
+                            <input
+                              type="checkbox"
+                              className="task-checkbox"
+                              checked={task.completed}
+                              onClick={(e) => e.stopPropagation()}
+                              onChange={() => handleTaskCompletion(task.id, !task.completed)}
+                            />
+                          </OverlayTrigger>
                           <h5>{task.title}</h5><br />
                           <div className="task-dates">
                             <small>Criação: {new Date(task.createdAt).toLocaleDateString('pt-BR')}</small><br />
@@ -145,8 +152,9 @@ const Dashboard: React.FC = () => {
                             )}
                           </div>
                         </div>
-                      )}
-                    </Draggable>
+                      </Link>
+                    )}
+                  </Draggable>
                   ))}
                   {provided.placeholder}
                 </div>

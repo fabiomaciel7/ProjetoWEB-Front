@@ -77,9 +77,9 @@ const UsersList: React.FC = () => {
           <h2>Lista de Usuários</h2>
         </div>
 
-        <ul className="users-list">
+        <div className="users-grid">
           {users.map((user) => (
-            <li key={user.id} className={`user-item ${user.isAdmin ? 'admin' : ''}`}>
+            <div key={user.id} className={`user-card ${user.isAdmin ? 'admin' : ''}`}>
               <div className="user-info">
                 <p>ID: {user.id}</p>
                 <p>Nome: {user.name}</p>
@@ -113,9 +113,9 @@ const UsersList: React.FC = () => {
                   </Link>
                 </OverlayTrigger>
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import CreateTask from './pages/CreateTask';
 import Sessions from './pages/Sessions';
 import Profile from './pages/Profile';
 import UsersList from './pages/UsersList'
+import TaskView from './pages/TaskView'
 
 const App: React.FC = () => {
   return (
@@ -21,6 +22,7 @@ const App: React.FC = () => {
         <Route path="/sessions" element={<Sessions />} />
         <Route path="/profile/:id" element={<Profile />} />
         <Route path="/usersList" element={<UsersList />} />
+        <Route path="/task/:id" element={<TaskView />} />
       </Routes>
     </Router>
   );

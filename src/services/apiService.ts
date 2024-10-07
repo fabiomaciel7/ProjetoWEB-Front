@@ -5,6 +5,7 @@ import { User } from '../types/User';
 import { LoginResponse } from '../types/LoginResponse';
 import { Session } from '../types/Session';
 import { UserUpdated } from '../types/UserUpdated';
+import { TaskUpdated } from '../types/TaskUpdated';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -60,7 +61,6 @@ export const updateUser = async (data: UserUpdated, userId: string | undefined) 
   }
 };
 
-
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
     const response = await axios.post<LoginResponse>('http://localhost:3001/api/login', {
@@ -99,20 +99,6 @@ export const markTaskAsCompleted = async (taskId: number, completed: boolean) =>
     await api.patch(`http://localhost:3001/api/task/complete/${taskId}`, { completed });
   } catch (error) {
     throw new Error('Erro ao marcar task como concluída.');
-  }
-};
-
-export const getUserAtual = async (): Promise<User> => {
-  try {
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
-      throw new Error('Usuário não autenticado.');
-    }
-
-    const response = await api.get(`http://localhost:3001/api/user/${userId}`);
-    return response.data as User;
-  } catch (error) {
-    throw new Error('Erro ao buscar usuário.');
   }
 };
 
@@ -180,5 +166,31 @@ export const promoteToAdmin = async (userId: number) => {
     await api.post(`http://localhost:3001/api/users/promote/${userId}`);
   } catch (error) {
     throw new Error('Erro ao promover usuário a admin.');
+  }
+};
+
+export const getTaskById = async (taskId: string): Promise<Task> => {
+  try {
+    const response = await api.get(`http://localhost:3001/api/task/${taskId}`);
+    return response.data as Task;
+  } catch (error) {
+    throw new Error('Erro ao buscar task.');
+  }
+};
+
+export const updateTask = async (taskId: string, taskData: TaskUpdated) => {
+  try {
+    const response = await api.put(`http://localhost:3001/api/task/update/${taskId}`, taskData);
+    return response.data;
+  } catch (error) {
+    throw new Error('Erro ao editar task.');
+  }
+};
+
+export const deleteTask = async (taskId: string) => {
+  try {
+    await api.delete(`http://localhost:3001/api/task/delete/${taskId}`);
+  } catch (error) {
+    throw new Error('Erro ao excluir task.');
   }
 };

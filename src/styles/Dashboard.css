@@ -173,3 +173,11 @@
   width: 24px;
   height: 24px;
 }
+
+.task-link {
+  text-decoration: none;
+}
+
+.task-link h5 {
+  text-decoration: none;
+}
