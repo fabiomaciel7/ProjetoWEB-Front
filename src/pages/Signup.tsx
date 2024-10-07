@@ -14,8 +14,7 @@ const Signup: React.FC = () => {
     e.preventDefault();
     
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const user = await createUser(name, email, password);
+      await createUser(name, email, password);
       setMessage(`Usuário criado com sucesso.`);
 
       setTimeout(() => {

@@ -14,8 +14,7 @@ const Login: React.FC = () => {
     e.preventDefault();
   
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const user = await login(email, password);
+      await login(email, password);
       setMessage('Usuário logado com sucesso.');
   
       navigate('/dashboard');

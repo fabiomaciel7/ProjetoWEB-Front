@@ -25,6 +25,14 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+const extractErrorMessage = (error: any): string => {
+  if (error.response && error.response.data) {
+    const { message, details } = error.response.data;
+    return details ? `${message}: ${details.join(', ')}` : message;
+  }
+  return 'Erro desconhecido.';
+};
+
 export const createUser = async (name: string, email: string, password: string) => {
   try {
     const response = await axios.post('http://localhost:3001/api/user/create', {
@@ -34,7 +42,7 @@ export const createUser = async (name: string, email: string, password: string) 
     });
     return response.data;
   } catch (error) {
-    throw new Error('Failed to create user');
+    throw new Error(extractErrorMessage(error));
   }
 };
 
@@ -57,7 +65,7 @@ export const updateUser = async (data: UserUpdated, userId: string | undefined) 
     
     return response.data;
   } catch (error) {
-    throw new Error('Erro ao atualizar usuário: ');
+    throw new Error(extractErrorMessage(error));
   }
 };
 
@@ -74,13 +82,17 @@ export const login = async (email: string, password: string): Promise<LoginRespo
 
     return response.data;
   } catch (error) {
-    throw new Error('Failed to login.');
+    throw new Error(extractErrorMessage(error));
   }
 };
 
 export const getTasks = async (): Promise<Task[]> => {
-  const response = await api.get('http://localhost:3001/api/tasks');
-  return response.data as Task[];
+  try {
+    const response = await api.get('http://localhost:3001/api/tasks');
+    return response.data as Task[];
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
 };
 
 export const logout = async () => {
@@ -90,7 +102,7 @@ export const logout = async () => {
     localStorage.removeItem('userId');
   } catch (error) {
     console.error('Erro ao fazer logout:', error);
-    throw error;
+    throw new Error(extractErrorMessage(error));
   }
 };
 
@@ -98,7 +110,7 @@ export const markTaskAsCompleted = async (taskId: number, completed: boolean) =>
   try {
     await api.patch(`http://localhost:3001/api/task/complete/${taskId}`, { completed });
   } catch (error) {
-    throw new Error('Erro ao marcar task como concluída.');
+    throw new Error(extractErrorMessage(error));
   }
 };
 
@@ -119,7 +131,7 @@ export const createTask = async (title: string, description?: string, dueDate?: 
     const response = await api.post('http://localhost:3001/api/task/create', data);
     return response.data;
   } catch (error) {
-    throw new Error('Erro ao criar tarefa');
+    throw new Error(extractErrorMessage(error));
   }
 };
 
@@ -128,7 +140,7 @@ export const getSessions = async (): Promise<Session[]> => {
     const response = await api.get(`http://localhost:3001/api/sessions`);
     return response.data as Session[];
   } catch (error) {
-    throw new Error('Erro ao buscar sessões.');
+    throw new Error(extractErrorMessage(error));
   }
 };
 
@@ -139,7 +151,7 @@ export const deleteUser = async (userId: string | undefined) => {
     }
     await api.delete(`http://localhost:3001/api/user/delete/${userId}`);
   } catch (error) {
-    throw new Error('Erro ao deletar usuário.');
+    throw new Error(extractErrorMessage(error));
   }
 };
 
@@ -148,7 +160,7 @@ export const getUserProfile = async (userId: string): Promise<User> => {
     const response = await api.get(`http://localhost:3001/api/user/${userId}`);
     return response.data as User;
   } catch (error) {
-    throw new Error('Erro ao buscar usuário.');
+    throw new Error(extractErrorMessage(error));
   }
 };
 
@@ -157,7 +169,7 @@ export const getAllUsers = async (): Promise<User[]> => {
     const response = await api.get(`http://localhost:3001/api/users`);
     return response.data as User[];
   } catch (error) {
-    throw new Error('Erro ao buscar usuário.');
+    throw new Error(extractErrorMessage(error));
   }
 };
 
@@ -165,7 +177,7 @@ export const promoteToAdmin = async (userId: number) => {
   try {
     await api.post(`http://localhost:3001/api/users/promote/${userId}`);
   } catch (error) {
-    throw new Error('Erro ao promover usuário a admin.');
+    throw new Error(extractErrorMessage(error));
   }
 };
 
@@ -174,7 +186,7 @@ export const getTaskById = async (taskId: string): Promise<Task> => {
     const response = await api.get(`http://localhost:3001/api/task/${taskId}`);
     return response.data as Task;
   } catch (error) {
-    throw new Error('Erro ao buscar task.');
+    throw new Error(extractErrorMessage(error));
   }
 };
 
@@ -183,7 +195,7 @@ export const updateTask = async (taskId: string, taskData: TaskUpdated) => {
     const response = await api.put(`http://localhost:3001/api/task/update/${taskId}`, taskData);
     return response.data;
   } catch (error) {
-    throw new Error('Erro ao editar task.');
+    throw new Error(extractErrorMessage(error));
   }
 };
 
@@ -191,6 +203,6 @@ export const deleteTask = async (taskId: string) => {
   try {
     await api.delete(`http://localhost:3001/api/task/delete/${taskId}`);
   } catch (error) {
-    throw new Error('Erro ao excluir task.');
+    throw new Error(extractErrorMessage(error));
   }
 };
