@@ -74,10 +74,21 @@
 }
 
 .content-header2 {
-  width: 100%;
+  display: flex;
+  justify-content: space-between;
   padding: 10px;
   border-radius: 5px;
   margin-bottom: 20px;
+  width: 100%;
+}
+
+.task-filter {
+  margin-left: auto;
+  padding: 8px;
+  font-size: 1em;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #f8f9fa;
 }
 
 .content-header h2 {
@@ -164,21 +175,20 @@
 }
 
 .add-task-button {
-  gap: 10px;
-  margin-bottom: 20px;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px;
   background-color: #4285ce;
   color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
   text-decoration: none;
-  font-size: 16px;
-  align-self: flex-start;
+  border-radius: 5px;
+  font-size: 1em;
 }
 
 .add-task-button svg {
   width: 24px;
   height: 24px;
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
 .task-link {

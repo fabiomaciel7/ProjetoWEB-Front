@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getTasks, logout, markTaskAsCompleted, getUserProfile } from '../services/apiService';
+import { getTasks, getCompletedTasks, getPendingTasks, getTasksGroupedByUser, logout, markTaskAsCompleted, getUserProfile  } from '../services/apiService';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/Dashboard.css';
@@ -11,6 +11,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 const Dashboard: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [filter, setFilter] = useState<string>('all');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,7 +29,16 @@ const Dashboard: React.FC = () => {
 
     const fetchTasks = async () => {
       try {
-        const tasksData: Task[] = await getTasks();
+        let tasksData: Task[] = [];
+        if (filter === 'completed') {
+          tasksData = await getCompletedTasks();
+        } else if (filter === 'pending') {
+          tasksData = await getPendingTasks();
+        } else if (filter === 'groupedByUser' && isAdmin) {
+          tasksData = await getTasksGroupedByUser();
+        } else {
+          tasksData = await getTasks();
+        }
         setTasks(tasksData);
       } catch (error) {
         console.log('Erro ao buscar tasks:', error);
@@ -37,7 +47,7 @@ const Dashboard: React.FC = () => {
 
     fetchUserProfile();
     fetchTasks();
-  }, []);
+  }, [filter,isAdmin]);
 
   const handleTaskCompletion = async (taskId: number, completed: boolean) => {
     try {
@@ -69,6 +79,10 @@ const Dashboard: React.FC = () => {
     items.splice(result.destination.index, 0, reorderedTask);
 
     setTasks(items);
+  };
+
+  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilter(e.target.value);
   };
 
   return (
@@ -108,13 +122,19 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="content-header2">
-        <Link to="/createTask" className="add-task-button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
-          </svg>
-          Adicionar Tarefa
-        </Link>
+          <Link to="/createTask" className="add-task-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+            </svg>
+            Adicionar Tarefa
+          </Link>
+          <select value={filter} onChange={handleFilterChange} className="task-filter">
+            <option value="all">Todas</option>
+            <option value="pending">Pendentes</option>
+            <option value="completed">Concluídas</option>
+            {isAdmin && <option value="groupedByUser">Agrupadas por Usuário</option>}
+          </select>
         </div>
 
         <DragDropContext onDragEnd={handleOnDragEnd}>

@@ -206,3 +206,31 @@ export const deleteTask = async (taskId: string) => {
     throw new Error(extractErrorMessage(error));
   }
 };
+
+export const getCompletedTasks = async (): Promise<Task[]> => {
+  try {
+    const response = await api.get(`http://localhost:3001/api/tasks/completed`);
+    return response.data as Task[];
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
+};
+
+export const getPendingTasks = async (): Promise<Task[]> => {
+  try {
+    const response = await api.get(`http://localhost:3001/api/tasks/pending`);
+    return response.data as Task[];
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
+};
+
+
+export const getTasksGroupedByUser = async (): Promise<Task[]> => {
+  try {
+    const response = await api.get<{ [key: number]: Task[] }>(`http://localhost:3001/api/tasks/byuser`);
+    return response.data ? Object.values(response.data).flat() : [];
+  } catch (error) {
+    throw new Error(extractErrorMessage(error));
+  }
+};

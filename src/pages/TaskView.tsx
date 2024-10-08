@@ -6,6 +6,7 @@ import taskmanager from '../assets/taskmanager.png';
 import '../styles/TaskView.css';
 import { BsFillTrash3Fill, BsFloppy2Fill } from 'react-icons/bs';
 import { TaskUpdated } from '../types/TaskUpdated';
+import DatePicker from 'react-datepicker';
 
 const TaskView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -23,14 +24,14 @@ const TaskView: React.FC = () => {
   useEffect(() => {
     const fetchTask = async () => {
       try {
-        if (id) {  
+        if (id) {
           const fetchedTask = await getTaskById(id);
           setTask(fetchedTask);
           setEditedTask({
             title: fetchedTask.title,
             description: fetchedTask.description,
-            dueDate: new Date(fetchedTask.dueDate).toISOString().split('T')[0],
-            completed: fetchedTask.completed
+            dueDate: fetchedTask.dueDate ? new Date(fetchedTask.dueDate).toISOString().split('T')[0] : '',
+            completed: fetchedTask.completed,
           });
         } else {
           console.error('ID da tarefa não fornecido');
@@ -39,14 +40,18 @@ const TaskView: React.FC = () => {
         console.log('Erro ao buscar tarefa:', error);
       }
     };
-  
+
     fetchTask();
   }, [id]);
-  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setEditedTask({ ...editedTask, [name]: value });
+    setIsModified(true);
+  };
+
+  const handleDateChange = (date: Date | null) => {
+    setEditedTask({ ...editedTask, dueDate: date ? date.toISOString() : '' });
     setIsModified(true);
   };
 
@@ -140,13 +145,13 @@ const TaskView: React.FC = () => {
           </Form.Group>
 
           <Form.Group controlId="dueDate" className="mt-3">
-            <Form.Label>Prazo</Form.Label>
-            <Form.Control
-              type="date"
-              name="dueDate"
-              value={editedTask.dueDate ? new Date(editedTask.dueDate).toISOString().split('T')[0] : ''}
-              onChange={handleChange}
-              required
+            <Form.Label className="prazo-date">Prazo: </Form.Label>
+            <DatePicker
+              selected={editedTask.dueDate ? new Date(editedTask.dueDate) : null}
+              onChange={handleDateChange}
+              dateFormat="dd/MM/yyyy"
+              className="form-control"
+              placeholderText="Selecione uma data"
             />
           </Form.Group>
 
