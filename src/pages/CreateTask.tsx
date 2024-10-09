@@ -12,6 +12,7 @@ const CreateTask: React.FC = () => {
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,10 +34,11 @@ const CreateTask: React.FC = () => {
   const handleCreateTask = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      setErrorMessage(null);
       await createTask(title, description, dueDate);
       navigate('/dashboard');
-    } catch (error) {
-      console.log('Erro ao criar task:', error);
+    } catch (error: any) {
+      setErrorMessage(error.message);
     }
   };
 
@@ -120,6 +122,8 @@ const CreateTask: React.FC = () => {
           <Button variant="primary" type="submit" className="mt-4">
             Criar Tarefa
           </Button>
+
+          {errorMessage && <p className="error-message mt-3">{errorMessage}</p>}
         </Form>
       </div>
     </div>

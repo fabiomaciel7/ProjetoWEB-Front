@@ -21,8 +21,9 @@ const Signup: React.FC = () => {
         navigate('/login');
       }, 2000);
       
-    } catch (error) {
-      setMessage('Falha na criação do usuário.');
+    } catch (error: any) {
+      const errorMessage = error.message || 'Falha na criação do usuário.';
+      setMessage(errorMessage);
     }
   };
 
