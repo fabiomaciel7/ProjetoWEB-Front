@@ -9,18 +9,20 @@ import { TaskUpdated } from '../types/TaskUpdated';
 import DatePicker from 'react-datepicker';
 
 const TaskView: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>(); // Obtém o ID da tarefa dos parâmetros da URL
   const [task, setTask] = useState<TaskUpdated>({
     title: '',
     description: '',
     dueDate: '',
     completed: false,
-  });
-  const [editedTask, setEditedTask] = useState<TaskUpdated>(task);
-  const [isModified, setIsModified] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  }); // Estado inicial para os dados da tarefa
+
+  const [editedTask, setEditedTask] = useState<TaskUpdated>(task); // Estado da tarefa editada pelo usuário
+  const [isModified, setIsModified] = useState(false); // Indica se houve alterações na tarefa
+  const [showModal, setShowModal] = useState(false); // Controla a exibição do modal de confirmação de exclusão
   const navigate = useNavigate();
 
+  // useEffect é usado para buscar os dados da tarefa quando o ID for carregado
   useEffect(() => {
     const fetchTask = async () => {
       try {
@@ -44,17 +46,26 @@ const TaskView: React.FC = () => {
     fetchTask();
   }, [id]);
 
+  /**
+   * Manipula mudanças nos campos de texto (título e descrição) e atualiza o estado da tarefa editada.
+   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setEditedTask({ ...editedTask, [name]: value });
     setIsModified(true);
   };
 
+  /**
+   * Manipula mudanças na data de vencimento e atualiza o estado da tarefa editada.
+   */
   const handleDateChange = (date: Date | null) => {
     setEditedTask({ ...editedTask, dueDate: date ? date.toISOString() : '' });
     setIsModified(true);
   };
 
+  /**
+   * Salva as alterações feitas na tarefa, atualizando-a no banco de dados.
+   */
   const handleSaveChanges = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -74,6 +85,9 @@ const TaskView: React.FC = () => {
     }
   };
 
+  /**
+   * Exclui a tarefa do banco de dados e redireciona o usuário de volta ao dashboard.
+   */
   const handleDeleteTask = async () => {
     try {
       if (id) {
@@ -88,12 +102,14 @@ const TaskView: React.FC = () => {
     setShowModal(false);
   };
 
+  // Controla a exibição do modal de confirmação de exclusão
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
 
   return (
     <div className="task-edit-container">
       <div className="sidebar">
+        {/* Seção do menu lateral com link para o perfil do usuário e opções de navegação */}
         <div className="logo-section">
           <Link to="/dashboard">
             <img src={taskmanager} alt="TaskManager Logo" className="logo" />
@@ -115,11 +131,13 @@ const TaskView: React.FC = () => {
         </div>
       </div>
 
+      {/* Área de edição de tarefas */}
       <div className="content-area">
         <div className="content-header">
           <h2>Editar Tarefa</h2>
         </div>
 
+        {/* Formulário de edição da tarefa */}
         <Form className="task-edit-form" onSubmit={handleSaveChanges}>
           <Form.Group controlId="title">
             <Form.Label>Título</Form.Label>
@@ -155,6 +173,7 @@ const TaskView: React.FC = () => {
             />
           </Form.Group>
 
+          {/* Botões para salvar alterações ou excluir tarefa */}
           <div className="button-group mt-4">
             <Button
               type="submit"
@@ -174,6 +193,7 @@ const TaskView: React.FC = () => {
           </div>
         </Form>
 
+        {/* Modal de confirmação de exclusão da tarefa */}
         <Modal show={showModal} onHide={closeModal} centered>
           <Modal.Header closeButton>
             <Modal.Title>Confirmar Exclusão</Modal.Title>

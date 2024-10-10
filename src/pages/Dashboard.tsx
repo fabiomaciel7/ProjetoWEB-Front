@@ -9,18 +9,25 @@ import taskmanager from '../assets/taskmanager.png';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const Dashboard: React.FC = () => {
+  // Define o estado para as tarefas
   const [tasks, setTasks] = useState<Task[]>([]);
+  // Define o estado para verificar se o usuário é admin
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  // Define o estado para o filtro de tarefas
   const [filter, setFilter] = useState<string>('all');
   const navigate = useNavigate();
 
+  /**
+   * useEffect para buscar o perfil do usuário e carregar as tarefas
+   * com base no filtro selecionado.
+   */
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         const userId = localStorage.getItem('userId');
         if (userId) {
           const userProfile = await getUserProfile(userId);
-          setIsAdmin(userProfile.isAdmin);
+          setIsAdmin(userProfile.isAdmin); // Verifica se o usuário é admin
         }
       } catch (error) {
         console.log('Erro ao buscar perfil do usuário:', error);
@@ -30,6 +37,7 @@ const Dashboard: React.FC = () => {
     const fetchTasks = async () => {
       try {
         let tasksData: Task[] = [];
+        // Aplica o filtro para buscar as tarefas de acordo com o estado do filtro
         if (filter === 'completed') {
           tasksData = await getCompletedTasks();
         } else if (filter === 'pending') {
@@ -47,8 +55,12 @@ const Dashboard: React.FC = () => {
 
     fetchUserProfile();
     fetchTasks();
-  }, [filter,isAdmin]);
+  }, [filter, isAdmin]); // Atualiza quando o filtro ou estado de admin mudam
 
+  /**
+   * Função para marcar a tarefa como concluída ou pendente.
+   * Atualiza o estado local das tarefas após a operação.
+   */
   const handleTaskCompletion = async (taskId: number, completed: boolean) => {
     try {
       await markTaskAsCompleted(taskId, completed);
@@ -62,6 +74,10 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  /**
+   * Função para fazer logout do usuário.
+   * Redireciona para a página de login após o logout.
+   */
   const handleLogout = async () => {
     try {
       await logout();
@@ -71,6 +87,10 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  /**
+   * Função de callback para lidar com a reorganização de tarefas
+   * após o término do "drag and drop".
+   */
   const handleOnDragEnd = (result: any) => {
     if (!result.destination) return;
 
@@ -81,6 +101,9 @@ const Dashboard: React.FC = () => {
     setTasks(items);
   };
 
+  /**
+   * Função para alterar o filtro de visualização de tarefas.
+   */
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFilter(e.target.value);
   };
@@ -88,12 +111,14 @@ const Dashboard: React.FC = () => {
   return (
     <div className="dashboard-container">
       <div className="sidebar">
+        {/* Seção do logo */}
         <div className="logo-section">
           <Link to="/dashboard">
             <img src={taskmanager} alt="TaskManager Logo" className="logo" />
           </Link>
         </div>
 
+        {/* Menu lateral */}
         <div className="menu-section">
           <div className="profile-section">
             <Link to={`/profile/${localStorage.getItem('userId')}`} className="profile-link">
@@ -105,6 +130,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           <div className="menu-options">
+            {/* Opção disponível apenas para admins */}
             {isAdmin && (
               <Link to="/usersList" className="btn btn-light">
                 Lista de Usuários
@@ -116,12 +142,14 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
+      {/* Área de conteúdo principal */}
       <div className="content-area">
         <div className="content-header">
           <h2>Minhas Tarefas</h2>
         </div>
 
         <div className="content-header2">
+          {/* Botão para adicionar nova tarefa */}
           <Link to="/createTask" className="add-task-button">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
               <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
@@ -129,6 +157,8 @@ const Dashboard: React.FC = () => {
             </svg>
             Adicionar Tarefa
           </Link>
+
+          {/* Filtro de tarefas */}
           <select value={filter} onChange={handleFilterChange} className="task-filter">
             <option value="all">Todas</option>
             <option value="pending">Pendentes</option>
@@ -137,6 +167,7 @@ const Dashboard: React.FC = () => {
           </select>
         </div>
 
+        {/* Drag and drop para tarefas */}
         <DragDropContext onDragEnd={handleOnDragEnd}>
           {tasks.length > 0 && (
             <Droppable droppableId="tasks">
@@ -144,25 +175,26 @@ const Dashboard: React.FC = () => {
                 <div className="task-grid" {...provided.droppableProps} ref={provided.innerRef}>
                   {tasks.map((task, index) => (
                     <Draggable key={task.id} draggableId={`${task.id}`} index={index}>
-                    {(provided, snapshot) => (
-                      <Link to={`/task/${task.id}`} className="task-link">
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className={`task-card ${task.completed ? 'completed' : ''} ${snapshot.isDragging ? 'dragging' : ''}`}
-                        >
-                          <OverlayTrigger
-                            placement="top"
-                            overlay={<Tooltip id={`tooltip-complete-${task.id}`}>Marcar como concluída</Tooltip>}
+                      {(provided, snapshot) => (
+                        <Link to={`/task/${task.id}`} className="task-link">
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            className={`task-card ${task.completed ? 'completed' : ''} ${snapshot.isDragging ? 'dragging' : ''}`}
                           >
-                            <input
-                              type="checkbox"
-                              className="task-checkbox"
-                              checked={task.completed}
-                              onClick={(e) => e.stopPropagation()}
-                              onChange={() => handleTaskCompletion(task.id, !task.completed)}
-                            />
+                            {/* Marcar tarefa como concluída */}
+                            <OverlayTrigger
+                              placement="top"
+                              overlay={<Tooltip id={`tooltip-complete-${task.id}`}>Marcar como concluída</Tooltip>}
+                            >
+                              <input
+                                type="checkbox"
+                                className="task-checkbox"
+                                checked={task.completed}
+                                onClick={(e) => e.stopPropagation()}
+                                onChange={() => handleTaskCompletion(task.id, !task.completed)}
+                              />
                           </OverlayTrigger>
                           <h5>{task.title}</h5><br />
                           <div className="task-dates">

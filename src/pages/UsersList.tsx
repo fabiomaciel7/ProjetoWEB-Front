@@ -9,10 +9,14 @@ import { User } from '../types/User';
 import { BsArrowUpSquareFill, BsPencilSquare } from 'react-icons/bs';
 
 const UsersList: React.FC = () => {
+  // Estado que armazena os usuários.
   const [users, setUsers] = useState<User[]>([]);
+  // Estado que armazena o ID do usuário atualmente logado.
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  // Hook para navegação entre rotas.
   const navigate = useNavigate();
 
+  // Hook useEffect para buscar os usuários da API assim que o componente é montado.
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -26,6 +30,7 @@ const UsersList: React.FC = () => {
     fetchUsers();
   }, []);
 
+  // Função que promove um usuário comum a administrador.
   const handlePromote = async (userId: number) => {
     try {
       await promoteToAdmin(userId);
@@ -37,6 +42,7 @@ const UsersList: React.FC = () => {
     }
   };
 
+  // Função que realiza o logout do usuário atual.
   const handleLogout = async () => {
     try {
       await logout();
@@ -48,6 +54,7 @@ const UsersList: React.FC = () => {
 
   return (
     <div className="users-list-container">
+      {/* Barra lateral de navegação */}
       <div className="sidebar">
         <div className="logo-section">
           <Link to="/dashboard">
@@ -56,6 +63,7 @@ const UsersList: React.FC = () => {
         </div>
 
         <div className="menu-section">
+          {/* Seção de perfil com link para a página do perfil do usuário atual */}
           <div className="profile-section">
             <Link to={`/profile/${currentUserId}`} className="profile-link">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-person-fill" viewBox="0 0 16 16">
@@ -66,20 +74,24 @@ const UsersList: React.FC = () => {
           </div>
 
           <div className="menu-options">
+            {/* Link para as sessões do usuário e botão de logout */}
             <Link to="/sessions" className="btn btn-light">Minhas Sessões</Link>
             <Button variant="danger" onClick={handleLogout}>Logout</Button>
           </div>
         </div>
       </div>
 
+      {/* Área de conteúdo onde a lista de usuários é exibida */}
       <div className="content-area">
         <div className="content-header">
           <h2>Lista de Usuários</h2>
         </div>
 
+        {/* Grade com a lista de usuários */}
         <div className="users-grid">
           {users.map((user) => (
             <div key={user.id} className={`user-card ${user.isAdmin ? 'admin' : ''}`}>
+              {/* Informações do usuário */}
               <div className="user-info">
                 <p>ID: {user.id}</p>
                 <p>Nome: {user.name}</p>
@@ -87,7 +99,9 @@ const UsersList: React.FC = () => {
                 <p>Data de cadastro: {new Date(user.createdAt).toLocaleDateString('pt-BR')}</p>
                 <p>{user.isAdmin ? 'Administrador' : 'Usuário Comum'}</p>
               </div>
+              
               <div className="user-actions">
+                {/* Botão para promover usuário a administrador, se ele ainda não for admin */}
                 {!user.isAdmin && (
                   <OverlayTrigger
                     placement="top"
@@ -102,6 +116,8 @@ const UsersList: React.FC = () => {
                     </Button>
                   </OverlayTrigger>
                 )}
+
+                {/* Botão para editar o usuário */}
                 <OverlayTrigger
                   placement="top"
                   overlay={<Tooltip id="edit-tooltip">Editar usuário</Tooltip>}

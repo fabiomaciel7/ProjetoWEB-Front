@@ -8,26 +8,30 @@ import {BsFillTrash3Fill, BsFloppy2Fill } from 'react-icons/bs';
 import { UserUpdated } from '../types/UserUpdated';
 
 const Profile: React.FC = () => {
+  // Extrai o id do usuário da URL
   const { id } = useParams<{ id: string }>();
+
+  // Define os estados para armazenar o perfil do usuário, perfil editado, senha, etc.
   const [userProfile, setUserProfile] = useState<UserUpdated>({
     name: '',
     email: '',
   });
   const [editedProfile, setEditedProfile] = useState<UserUpdated>(userProfile);
   const [password, setPassword] = useState('');
-  const [isModified, setIsModified] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isModified, setIsModified] = useState(false); // Indica se houve modificação no perfil
+  const [showModal, setShowModal] = useState(false); // Controla a exibição do modal de exclusão
+  const [isAdmin, setIsAdmin] = useState<boolean>(false); // Indica se o usuário é admin
   const navigate = useNavigate();
 
+  // Hook que busca o perfil do usuário ao carregar o componente ou quando o ID do usuário mudar
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         if (id) {
-          const userProfile = await getUserProfile(id);
+          const userProfile = await getUserProfile(id); // Busca o perfil do usuário pelo id
           setUserProfile(userProfile);
           setEditedProfile(userProfile);
-          setIsAdmin(userProfile.isAdmin);
+          setIsAdmin(userProfile.isAdmin); // Verifica se o usuário é admin
         }
       } catch (error) {
         console.log('Erro ao buscar perfil do usuário:', error);
@@ -36,71 +40,76 @@ const Profile: React.FC = () => {
   
     fetchUserProfile();
   }, [id]);
-  
 
+  // Função que atualiza os campos de nome e email ao editar o perfil
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setEditedProfile({ ...editedProfile, [name]: value });
-    setIsModified(true);
+    setIsModified(true); // Indica que houve alteração
   };
 
+  // Função que atualiza o campo de senha ao editar o perfil
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
     setIsModified(true);
   };
 
+  // Função que salva as alterações no perfil do usuário
   const handleSaveChanges = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const updatedData = { ...editedProfile };
       if (password) {
-        updatedData.password = password;
+        updatedData.password = password; // Atualiza a senha se estiver preenchida
       }
-      await updateUser(updatedData, id);
-      setIsModified(false);
+      await updateUser(updatedData, id); // Atualiza o usuário
+      setIsModified(false); // Indica que as alterações foram salvas
       setUserProfile(editedProfile);
-      setPassword('');
+      setPassword(''); // Limpa o campo de senha
     } catch (error) {
       console.error('Erro ao salvar alterações:', error);
     }
   };  
 
+  // Função que exclui o perfil do usuário
   const handleDeleteProfile = async () => {
     try {
-      await deleteUser(id);
-      if(id === localStorage.getItem('userId')){
-        navigate('/');
-      }
-      else{
-        navigate('/usersList')
+      await deleteUser(id); // Exclui o usuário pelo id
+      if (id === localStorage.getItem('userId')) {
+        navigate('/'); // Se o usuário estiver logado, redireciona para a página inicial
+      } else {
+        navigate('/usersList'); // Caso contrário, redireciona para a lista de usuários (admin)
       }
     } catch (error) {
       console.error('Erro ao excluir perfil:', error);
     }
-    setShowModal(false);
+    setShowModal(false); // Fecha o modal após exclusão
   };
 
+  // Função que realiza o logout do usuário
   const handleLogout = async () => {
     try {
-      await logout();
-      navigate('/login');
+      await logout(); // Faz logout do sistema
+      navigate('/login'); // Redireciona para a página de login
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
     }
   };
 
+  // Funções para abrir e fechar o modal de confirmação de exclusão
   const openModal = () => setShowModal(true);
-
   const closeModal = () => setShowModal(false);
 
   return (
     <div className="profile-container">
+      {/* Sidebar com o menu de navegação */}
       <div className="sidebar">
         <div className="logo-section">
           <Link to="/dashboard">
             <img src={taskmanager} alt="TaskManager Logo" className="logo" />
           </Link>
         </div>
+
         <div className="menu-section">
           <div className="profile-section">
             <Link to={`/profile/${localStorage.getItem('userId')}`} className="profile-link">
@@ -110,8 +119,9 @@ const Profile: React.FC = () => {
               <p className="profile-text">Meu Perfil</p>
             </Link>
           </div>
+
           <div className="menu-options">
-          {isAdmin && (
+            {isAdmin && (
               <Link to="/usersList" className="btn btn-light">
                 Lista de Usuários
               </Link>
@@ -122,11 +132,13 @@ const Profile: React.FC = () => {
         </div>
       </div>
 
+      {/* Área de conteúdo principal */}
       <div className="content-area">
         <div className="content-header">
           <h2>Ver Perfil</h2>
         </div>
 
+        {/* Formulário de edição do perfil */}
         <Form className="profile-form" onSubmit={handleSaveChanges}>
           <Form.Group controlId="name">
             <Form.Label>Nome</Form.Label>
@@ -165,14 +177,14 @@ const Profile: React.FC = () => {
             <Button
               type="submit"
               variant="primary"
-              disabled={!isModified}
+              disabled={!isModified} // Botão desabilitado se não houve alterações
               className="save-button"
             >
               <BsFloppy2Fill /> Salvar Alterações
             </Button>
             <Button
               variant="danger"
-              onClick={openModal}
+              onClick={openModal} // Abre modal de confirmação
               className="delete-button"
             >
               <BsFillTrash3Fill /> Excluir Perfil
@@ -180,6 +192,7 @@ const Profile: React.FC = () => {
           </div>
         </Form>
 
+        {/* Modal de confirmação de exclusão de perfil */}
         <Modal show={showModal} onHide={closeModal} centered>
           <Modal.Header closeButton>
             <Modal.Title>Confirmar Exclusão</Modal.Title>

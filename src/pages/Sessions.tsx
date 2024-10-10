@@ -8,11 +8,19 @@ import taskmanager from '../assets/taskmanager.png';
 import { Session } from '../types/Session';
 
 const Sessions: React.FC = () => {
+  // Estado para armazenar a lista de sessões do usuário
   const [sessions, setSessions] = useState<Session[]>([]);
+  // Estado para indicar se o usuário atual é um administrador
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  // Hook do React Router para redirecionamento de navegação
   const navigate = useNavigate();
 
+  /**
+   * useEffect que busca as sessões e o perfil do usuário ao carregar o componente.
+   * Se o usuário for administrador, campos adicionais serão exibidos.
+   */
   useEffect(() => {
+    // Função que busca todas as sessões do usuário
     const fetchSessions = async () => {
       try {
         const sessionsData = await getSessions();
@@ -25,6 +33,7 @@ const Sessions: React.FC = () => {
       }
     };
 
+    // Função que busca o perfil do usuário para verificar se ele é um administrador
     const fetchUserProfile = async () => {
       try {
         const userId = localStorage.getItem('userId');
@@ -41,6 +50,10 @@ const Sessions: React.FC = () => {
     fetchUserProfile();
   }, []);
 
+  /**
+   * Função que realiza o logout do usuário atual.
+   * Em caso de sucesso, redireciona o usuário para a página de login.
+   */
   const handleLogout = async () => {
     try {
       await logout();
@@ -52,6 +65,7 @@ const Sessions: React.FC = () => {
 
   return (
     <div className="sessions-container">
+      {/* Sidebar com o menu de navegação */}
       <div className="sidebar">
         <div className="logo-section">
           <Link to="/dashboard">
@@ -59,6 +73,7 @@ const Sessions: React.FC = () => {
           </Link>
         </div>
 
+        {/* Menu de navegação e opções de usuário */}
         <div className="menu-section">
           <div className="profile-section">
             <Link to={`/profile/${localStorage.getItem('userId')}`} className="profile-link">
@@ -79,11 +94,14 @@ const Sessions: React.FC = () => {
         </div>
       </div>
 
+      {/* Área de conteúdo principal */}
       <div className="content-area">
+        {/* Cabeçalho da lista de sessões */}
         <div className="content-header">
           <h2>Minhas Sessões</h2>
         </div>
 
+        {/* Lista de sessões do usuário */}
         <ul className="session-list">
           {sessions.map((session) => (
             <li key={session.id} className="session-item">
